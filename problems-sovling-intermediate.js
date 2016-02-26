@@ -1,6 +1,19 @@
 //Sum all numbers in a range from a given array.
 //Return the sume of those two numbers and all numbers between them
+function sumAll(arr) {
+  var i = Math.min(arr[0], arr[1]) + 1;
+  var n = Math.max(arr[0], arr[1]);
 
+  for (i; i < n; i ++) {
+    arr.push(i);
+  }
+  return arr.reduce(sum, 0);
+}
+function sum(preval, curval) {
+  return preval + curval;
+}
+
+sumAll([1, 4]);
 
 
 //Diff Two Arrays
@@ -8,27 +21,25 @@
 //the two given arrays, but not both. (return the symmetric fiff of the two arrays)
 function diff(arr1, arr2) {
   var newArr = [];
-  newArr = arr1.concat(arr2).sort();
-  console.log(newArr);
-  //var result = newArr.filter(notSame(val, index, newArr));
-  var result = Array.prototype.filter.call(newArr, notSame);
-  // Same, same; but different.
-  return result;
-}
-
-function notSame(val, index, arr) {
-  if (arr[-1]  == val) {
-    return true;
-  }
-  if (arr[index + 1] == val) {
-    if (arr[index + 1] == arr[-1]) {
-      arr.slice(index+1);
-      return false;
-    } else {
-      arr.slice(index+1, index+2);
-      return false;
+  function notInArray(elem, arr){
+    if (arr.lastIndexOf(elem) == -1){
+      return true;
     }
   }
+
+  for (var i = 0; i < arr1.length; i++){
+    if (notInArray(arr1[i], arr2)){
+      newArr.push(arr1[i]);
+    }
+  }
+  for (var j = 0; j < arr2.length; j++){
+    if (notInArray(arr2[j], arr1)){
+      newArr.push(arr2[j]);
+    }
+  }
+
+  // Same, same; but different.
+  return newArr;
 }
 
 diff([1, 2, 3, 5], [1, 2, 3, 4, 5]);
@@ -64,7 +75,18 @@ function convert(num) {
  return result.join();
 }
 
-
+function toRomanSimpleSolution(n) {
+    var r = '',
+        decimals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1],
+        roman = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
+    for (var i = 0; i < decimals.length; i++) {
+        while (n >= decimals[i]) {
+            r += roman[i];
+            n -= decimals[i];
+        }
+    }
+    return r;
+}
 
 //Where art thou
 /*
@@ -81,28 +103,18 @@ object from the array (the first argument), because it contains the property and
 t's value, that was passed on as the second argument.
 */
 function where(collection, source) {
-  var arr = [];
-  var count = 0;
+  var sourceKeys = Object.keys(source);
   // What's in a name?
-  find: for (var i =0; i<collection.length; i++) {
-    var x;
-    next:for (x in collection[i]) {
-
-      if (source.hasOwnProperty(x)) {
-        if (collection[i][x] == source[x]) {
-            count ++;
-
-        }
+  return collection.filter(function(obj) {
+    for (var i = 0; i < sourceKeys.length; i++) {
+      var k = sourceKeys[i];
+      if (!obj.hasOwnProperty(k) || obj[k] != source[k]) {
+        return false;
       }
-      if (count == Object.keys(source).length) {
-        arr.push(collection[i]);
-        count = 0;
-        continue find;
-      }
-
     }
-  }
-  return arr;
+    return true;
+  });
+
 }
 
 where([{ "a": 1, "b": 2 }, { "a": 1 }, { "a": 1, "b": 2, "c": 2 }], { "a": 1, "b": 2 });
@@ -115,29 +127,118 @@ where([{ "a": 1, "b": 2 }, { "a": 1 }, { "a": 1, "b": 2, "c": 2 }], { "a": 1, "b
 //First argument is the sentence to perform search and replace on
 //Second argument is the word that you will be replacing (before)
 //Third arguemnt is what you will be replacing the second argument with (after)
+function myReplace(str, before, after) {
+  var arr = str.split(" ");
+  if (before.toLowerCase() != before) {
+        after = after.charAt(0).toUpperCase() + after.substr(1);
+
+  }
+  for (var i=0; i<arr.length; i++) {
+    if (arr[i] == before) {
+
+      arr.splice(i, 1, after);
+    }
+  }
+  str = arr.join(" ");
+  return str;
+}
+
+myReplace("A quick brown fox jumped over the lazy dog", "jumped", "leaped");
+
 
 
 //Pig Latin
 //Takes the first consonat(or consonant cluster) of an English word, moved it to the
 //end of the word and suffixed an 'ay'
 //If a word begins with a vowel, just add "way" to the end.
+function translate(str) {
+  var result = "";
+  //if (str.match(/^[aeiou]/i)) {
+  //    str = str + "ay";
+  //}
+  var arr = str.split('');
+    for (var i=0; i<arr.length; i++) {
+    if (arr[i].match(/[aeiou]/i)) {
+      if (i === 0) {
+        str = str + "way";
+        break;
+      } else {
+        str = str.substr(i) + str.substr(0, i) + "ay";
+        break;
+      }
+    }
+  }
+  //"bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ"
+  return str;
+}
 
+translate("eight");
 
 //DNA Paring
 //The DNA strand is missing the paring element.  Take each character, get its pair,
 //and return the result as a 2nd array
 //AT and CG
+function pair(str) {
+  var arr = str.split("");
+  var result = [];
+  for (var i=0; i<arr.length; i++) {
+    switch (arr[i]) {
+      case "C":
+        result.push(["C", "G"]);
+        break;
+      case "G":
+        result.push(["G", "C"]);
+        break;
+      case "A":
+        result.push(["A", "T"]);
+        break;
+      case "T":
+        result.push(["T", "A"]);
+        break;
+      }
+  }
+  return result;
+}
 
+pair("GCG");
 
 //Missing Letters
 //Find the missing letter in the passed letter range and return it
 //If all letters are present in the range, returned undefined
+function fearNotLetter(str) {
+  var result = undefined;
+  var count = 0;
+  for (var i=0; i<str.length; i++) {
+    if (i == str.length-1) {
+      return result;
+    }
+    count = str.charCodeAt(i);
+    if (count+1 != str.charCodeAt(i+1)) {
+      return String.fromCharCode(count+1);
+    }
+
+  }
+  return result;
+}
+
+fearNotLetter("abcd");
+
 
 
 //Boo Who
 //Check if a value is classified as a boolean primitive.  Return true or false
 //Boolean primitives are true and false
+function boo(bool) {
+  // What is the new fad diet for ghost developers? The Boolean.
+  if ((typeof bool) == "boolean") {
+    return true;
+  } else {
+    return false;
+  }
+  //return result;
+}
 
+boo(null);
 
 //Sorted Union
 //Write a function that takes two or more arrays and returns a new array of unique
@@ -161,6 +262,20 @@ unite([1, 3, 2], [5, 2, 1, 4], [2, 1]);
 
 //Convert HTML Entities
 //Convert the charater &, <, >, ", ' in a string to their corresponding HTML entities
+function convert(str) {
+  // &colon;&rpar;
+  //str = str.replace(/\&/g, &amp, &lt, &gt, &quot, &apos );
+  str = str.replace(/&/g, "&amp;" );
+  str = str.replace(/</g, "&lt;");
+  str = str.replace(/>/g, "&gt;");
+  str = str.replace(/"/g, "&quot;");
+  str = str.replace(/'/g, "&apos;");
+
+  return str;
+}
+
+convert("Dolce & Gabbana");
+
 
 
 //Spinal Tap Case
@@ -372,12 +487,45 @@ function steamroller (arr) {
 //Return an English translated sentence of the passed binary string
 //The binary string will be space separated
 //
+function binaryAgent(str) {
+  var arr = [];
+  str = str.split(" ");
+  function binaryASCII(str){
+    var result;
+    result = str.charAt(0) * 128;
+    result += str.charAt(1) * 64;
+    result += str.charAt(2) * 32;
+    result += str.charAt(3) * 16;
+    result += str.charAt(4) * 8;
+    result += str.charAt(5) * 4;
+    result += str.charAt(6) * 2;
+    result += str.charAt(7) * 1;
+    return result;
+  }
+  for (var i = 0; i < str.length; i++) {
+    arr.push(String.fromCharCode(binaryASCII(str[i])));
+  }
+
+  return arr.join("");
+}
 
 
 //everything Be true
 //Check if the predicate (2nd args) is truthy on all elements of a collection
 //(first args)
+ function every(collection, pre) {
+  // Is everyone being true?
+   //var result = collection.every(function(current){
+   //  return current.hasOwnProperty(pre);
+   //});
+   for (var i = 0; i < collection.length; i++) {
+     if (!(pre in collection[i])) {
+       return false;
+     }
+   }
 
+  return true;
+}
 
 
 
