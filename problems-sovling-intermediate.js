@@ -47,33 +47,39 @@ diff([1, 2, 3, 5], [1, 2, 3, 4, 5]);
 //Roman Numeral Converter
 //convert the given number into a roman numeral
 function convert(num) {
-  var single = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
-  var tens = ["X", "XX", "XXX", "XL", "LX", "LXX", "LXXX", "CX"];
+  var ones = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
+  var tens = ["X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"];
   var hundreds = ["C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"];
   var thousands = Math.floor(num/1000);
   var roman = [];
   roman.push(hundreds);
   roman.push(tens);
-  roman.push(single);
+  roman.push(ones);
+  // return roman;
+
   var result = "";
   if (thousands !== 0) {
     for (var i=0; i<thousands; i++) {
-      result.push("M");
+      result += "M";
     }
-  }
-  if (num > 1000) {
-    num = num - thousands * 1000;
-  }
-  var arr = num.toString().split(); //change (num - thousands) to array
-  var n = arr.length;  // how many digits,
-  for (var j=0; j<n; j++) {
-    var index = arr[j] -1;
-    result.push(roman[-n][index]);
-    n += 1;
+     num = num - thousands * 1000;
   }
 
- return result.join();
+  var arr = num.toString().split(""); //change (num - thousands) to array
+  var n = arr.length;  // how many digits,
+  for (var j=0; j<n; j++) {
+    if (arr[j] != "0") {
+      var index = arr[j] -1;
+      //return roman[j][index];
+      result += roman[j+3-n][index];
+    }
+  }
+
+ return result;
 }
+
+convert(97);
+
 
 function toRomanSimpleSolution(n) {
     var r = '',
