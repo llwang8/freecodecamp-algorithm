@@ -524,21 +524,63 @@ function binaryAgent(str) {
    //var result = collection.every(function(current){
    //  return current.hasOwnProperty(pre);
    //});
-   for (var i = 0; i < collection.length; i++) {
-     if (!(pre in collection[i])) {
-       return false;
+  function every(collection, pre) {
+  // Is everyone being true?
+  // var result = collection.every(function(current){
+  //   return current.hasOwnProperty(pre);
+  // });
+   if(typeof pre == 'string') {
+     for (var i=0; i<collection.length; i++) {
+       if (!collection[i].hasOwnProperty(pre) || !collection[i][pre]) {
+         return false;
+       }
      }
+     return true;
    }
 
-  return true;
 }
 
+every([{"single": ""}, {"single": "double"}], "single");  //false
+
+every([{"user": "Tinky-Winky", "sex": "male", "age": 0},
+  {"user": "Dipsy", "sex": "male", "age": 3},
+  {"user": "Laa-Laa", "sex": "female", "age": 5},
+  {"user": "Po", "sex": "female", "age": 4}], "age");  //true
 
 
 //Arguments Optional
 //Create a function that sums two arguments together.  If only one argument is
 //provide, then return a function that expects one argument and return the sum.
+function add() {
+  var checkNum = function(num) {
+    if (typeof num != Number) {
+      return undefined;
+    } else {
+      return num;
+    }
+  };
 
+   a = checkNum(arguments[0]);
+   b = checkNum(arguments[1]);
+
+  if ((arguments[0] === undefined) || (a === undefined)) {
+      return undefined;
+  } else if ((arguments[1] === undefined) || (b === undefined)) {
+      var x = arguments[0];
+      if (checkNum(arguments[0])) {
+        return function(y) {
+          if ((y === undefined) || (checkNum(y) === undefined)) {
+            return undefined;
+          }else {
+            return x + y;
+          }
+        };
+      }
+  } else {
+      return arguments[0] + arguments[1];
+  }
+
+}
 
 
 
