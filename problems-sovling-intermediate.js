@@ -552,35 +552,23 @@ every([{"user": "Tinky-Winky", "sex": "male", "age": 0},
 //Create a function that sums two arguments together.  If only one argument is
 //provide, then return a function that expects one argument and return the sum.
 function add() {
-  var checkNum = function(num) {
-    if (typeof num != Number) {
+  if ((arguments.length === 1) && (typeof arguments[0] === 'number')) {
+    var x = arguments[0];
+    return function(y) {
+      if (typeof y === 'number')
+        return x + y;
+    else
       return undefined;
-    } else {
-      return num;
-    }
-  };
-
-   a = checkNum(arguments[0]);
-   b = checkNum(arguments[1]);
-
-  if ((arguments[0] === undefined) || (a === undefined)) {
-      return undefined;
-  } else if ((arguments[1] === undefined) || (b === undefined)) {
-      var x = arguments[0];
-      if (checkNum(arguments[0])) {
-        return function(y) {
-          if ((y === undefined) || (checkNum(y) === undefined)) {
-            return undefined;
-          }else {
-            return x + y;
-          }
-        };
-      }
-  } else {
-      return arguments[0] + arguments[1];
+    };
   }
+  else if ((typeof arguments[0] === 'number') && typeof arguments[1] === 'number')
+      return arguments[0] + arguments[1];
+   else
+      return undefined;
 
 }
+
+add(2)([3]);
 
 
 
