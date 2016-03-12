@@ -22,10 +22,38 @@ telephoneCheck("555-555-5555");
 //the set with elements which are in either of the two the sets but not both
 //(C △ D = {1, 4} △ {2, 3} = {1, 2, 3, 4}).
 function sym(args) {
-  return args;
+  if (arguments.length !== 0){
+    var result=[], obj={}, i, n;
+    n = arguments.length;
+    result = arguments[0];
+    for (i = 1; i<n; i++){
+      result = symDiff(result, arguments[i]);
+      console.log(result);
+    }
+    return result;
+  }else {
+    return null;
+  }
+
+}
+function symDiff(arr1, arr2) {
+  var i, res = [];
+  arr1.forEach(function(item){
+    if((arr2.indexOf(item) < 0) && (res.indexOf(item) < 0)){
+      res.push(item);
+    }
+  });
+  arr2.forEach(function(item){
+    if((arr1.indexOf(item) < 0) && (res.indexOf(item) < 0)){
+       res.push(item);
+       }
+  });
+  return res;
 }
 
-sym([1, 2, 3], [5, 2, 1, 4]);
+
+
+sym([1, 1, 2, 5], [2, 2, 3, 5], [3, 4, 5, 5]);
 
 /*Exact Change
 Design a cash register drawer function that accepts purchase price as the
