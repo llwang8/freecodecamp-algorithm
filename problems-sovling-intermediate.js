@@ -297,6 +297,7 @@ function spinalCase(str) {
   return str;
 }
 
+
 //Sum all odd fibonacci numbers up to and including the passed number if it is
 //Fibonocci number
  function sumFibs(num) {

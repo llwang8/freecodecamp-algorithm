@@ -64,16 +64,7 @@ Return the string "Insufficient Funds" if cash-in-drawer is less than the change
 Return the string "Closed" if cash-in-drawer is equal to the change due.
 Otherwise, return change in coin and bills, sorted in highest to lowest order.
 */
-function spinalCase(str) {
-  // "It's such a fine line between stupid, and clever."
-  // --David St. Hubbins
-  str = str.replace(/A-Z/, " /A-Z/").split(" ").join("-").toLowerCase();
-  str = str.toLowerCase().split(" ").join("-");
-  str = str.toLowerCase().split("_").join("-");
-  return str;
-}
 
-spinalCase("thisIsSpinalTap");
 
 
 
@@ -85,6 +76,22 @@ found, add the new item and quantity into the inventory array in alphabetical or
 */
 function inventory(arr1, arr2) {
     // All inventory must be accounted for or you're fired!
+    var i, j;
+    for(i=0; i<arr1.length; i++){
+      for (j=0; j<arr2.length; j++){
+        if (arr1[i][1] == arr2[j][1]){
+          arr1[1][0] += arr2[j][0;
+          arr2.splice(j, 1);
+        }
+      }
+    }
+    for(i=0; i<arr2.length; i++) {
+      for(j=0; j<arr1.length; j++){
+        arr1.splice(j, 0, arr2[i]);
+      }
+    }
+
+
     return arr1;
 }
 
@@ -118,6 +125,24 @@ aba, aba, baa, baa), but only 2 of them (aba and aba) don't have the same letter
 (in this case a) repeating.
 */
 function permAlone(str) {
+  var letters, result, final, i, j, temp;
+  if (typeof str === "string"){
+    letters = str.split("");
+    for (i=0; i<letters.length; i++){
+      temp = letters;
+      temp.splice(i, 1);
+      permutation(letters[i], temp);
+
+    }
+  }else {
+    return "Input is not string.";
+  }
+
+
+
+  function permutation(item, arr){
+
+  }
   return str;
 }
 
