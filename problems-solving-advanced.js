@@ -64,39 +64,125 @@ Return the string "Insufficient Funds" if cash-in-drawer is less than the change
 Return the string "Closed" if cash-in-drawer is equal to the change due.
 Otherwise, return change in coin and bills, sorted in highest to lowest order.
 */
+function checkCashRegister(price, cash, cid){
+  var change = (cash - price).toFixed(2);
+  console.log("change: " + change);
+      unitCoinValue = {
+        "PENNY": 0.01,
+        "NICKEL": 0.05,
+        "DIME": 0.10,
+        "QUARTER": 0.25,
+        "ONE": 1.00,
+        "FIVE": 5.00,
+        "TEN": 10.00,
+        "TWENTY": 20.00,
+        "ONE HUNDRED": 100.00
+      };
+      result = {};
+  var cidTotal = cid.map(function(each){return each[1]})
+                 .reduct(function(a, b){return a + b});
+
+  if (change < 0){
+    throw new Error ("Not enough money to pay the price");
+  }else if (change === 0){
+    return ("Just the right amount to pay for the price.");
+  }
+
+  if (change > cidTotal){
+    return "Insufficient Funds";
+  }else if (change = cidTotal){
+    return "Closed";
+  }
+
+  for (var i=cid.length-1; i>=0; i--){
+    var coinName = cid[i][0],
+        unitValue = unitCoinValue[coinName];
+        coinValue = cid[i][1];
+        console.log(coinName);
+    while (change - unitValue >= 0 && coinValue - unitValue >= 0){
+        change = (change - unitValue).toFixed(2);
+        coinValue = (coinValue - unitValue).toFixed(2);
+
+        console.log("change: " + change);
+        //result[coinName] ?  result[coinName] += unitValue : result[coinName] = unitValue;
+        if (!result[coinName]){
+          result[coinName] = unitValue;
+        }else {
+          result[coinName] += unitValue;
+        }
+    }
+  }
+/*
+  if(change > 0){
+    return "Insufficient Funds";
+  }else if(i === 0 && coinValue === 0){
+    return "Closed";
+  }
+*/
+
+  var changeArr = [];
+  for (var key in result){
+    changeArr.push([key, result[key]]);
+  }
+  console.log(changeArr);
+  return changeArr;
+}
+
+checkCashRegister(19.50, 20.00, [["PENNY", 0.50], ["NICKEL", 0], ["DIME", 0],
+                                ["QUARTER", 0], ["ONE", 0], ["FIVE", 0],
+                                ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]]);
 
 
 
+checkCashRegister(3.26, 100.00, [["PENNY", 1.01], ["NICKEL", 2.05],
+                                ["DIME", 3.10], ["QUARTER", 4.25],
+                                ["ONE", 90.00], ["FIVE", 55.00],
+                                ["TEN", 20.00], ["TWENTY", 60.00],
+                                ["ONE HUNDRED", 100.00]]);
 
-
-
+checkCashRegister(19.50, 20.00, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.10],
+                                ["QUARTER", 4.25], ["ONE", 90.00], ["FIVE", 55.00],
+                                ["TEN", 20.00], ["TWENTY", 60.00],
+                                ["ONE HUNDRED", 100.00]]);
 
 /*Inventroy Update
 Compare and update inventory stored in a 2d array against a second 2d array of a
 fresh delivery. Update current inventory item quantity, and if an item cannot be
 found, add the new item and quantity into the inventory array in alphabetical order.
 */
-function inventory(arr1, arr2) {
+function inventory(arrInventory, arrDelivery) {
     // All inventory must be accounted for or you're fired!
-    var i, j;
-    for(i=0; i<arr1.length; i++){
-      for (j=0; j<arr2.length; j++){
-        if (arr1[i][1] == arr2[j][1]){
-          arr1[1][0] += arr2[j][0;
-          arr2.splice(j, 1);
+    var i, j, found = false;
+    for (i=0; i<arrDelivery.length; i++){
+        delItemName = arrDelivery[i][1];
+        delItemQuantity = arrDelivery[i][0];
+        arrInventory.forEach(function(item){
+          if (item[1] == delItemName){
+            item[0] += delItemQuantity;
+            found = true;
+          }
+        }, this);
+        if (!found){
+          arrInventory.push(item);
         }
-      }
     }
-    for(i=0; i<arr2.length; i++) {
-      for(j=0; j<arr1.length; j++){
-        arr1.splice(j, 0, arr2[i]);
-      }
-    }
-
-
-    return arr1;
 }
 
+var curInv = [
+    [21, "Bowling Ball"],
+    [2, "Dirty Sock"],
+    [1, "Hair Pin"],
+    [5, "Microphone"]
+];
+
+var newInv = [
+    [2, "Hair Pin"],
+    [3, "Half-Eaten Apple"],
+    [67, "Bowling Ball"],
+    [7, "Toothpaste"]
+];
+
+updateInventory(curInv, newInv);
 /* Example inventory lists
 Compare and update inventory stored in a 2d array against a second 2d array of a
 fresh delivery. Update current inventory item quantity, and if an item cannot be
@@ -230,9 +316,7 @@ console.log(final);
 //by Sabba Kilam
 /*
 Some of the names are long, but descriptive.
-
 Features:
-
 No longer get the "too much recursion" message.
 Only one argument is passed to the function.
 Takes a string or a number argument.
@@ -274,22 +358,19 @@ function getPermutations(str){
 /*Friendly Date Ranges
 Convert a date range consisting of two dates formatted as YYYY-MM-DD into a more
 readable format.
-
 The friendly display should use month names instead of numbers and ordinal dates
 instead of cardinal ("1st" instead of "1").
-
 Do not display information that is redundant or that can be inferred by the user:
 if the date range ends in less than a year from when it begins, do not display the
 ending year. If the range ends in the same month that it begins, do not display the
 ending year or month.
-
 Additionally, if the date range begins in the current year and ends within one year,
 the year should not be displayed at the beginning of the friendly range.
 */
 function friendly(arrDate) {
   var i;
   var arr = arrDate;
-  transform();
+  arr.forEach(transform);
   //return arr;
   var n =  arr.length;
   var result = [];
@@ -312,15 +393,16 @@ function friendly(arrDate) {
   formatDate();
   return result;
 
-  function transform(){
-    for (i=0; i<n; i++){
-      arr[i] = arr[i].split("-");
-      arr[i][1] = parseInt(arr[i][1]);
-      arr[i][2] = parseInt(arr[i][2]);
-      arr[i].push(arr[i].shift());
-    }
-    return arr;
+  function transform(a){
+
+      a = a.split("-");
+      a[1] = parseInt(a[1]);
+      a[2] = parseInt(a[2]);
+      a.push(a[i].shift());
+
+    return a;
   }
+
   function formatDate(){
     var temp;
     for(var i=0; i<n; i++){
@@ -390,13 +472,10 @@ console.log(arrTest[0]);
 
 /*Make a Person
 Fill in the object constructor with the methods specified in the tests.
-
 Those methods are getFirstName(), getLastName(), getFullName(), setFirstName(first),
 setLastName(last), and setFullName(firstAndLast).
-
 All functions that take an argument have an arity of 1, and the argument will be a
 string.
-
 These methods must be the only available means for interacting with the object.
 */
 
@@ -412,14 +491,10 @@ bob.getFullName();
 /*Map the Debris
 Return a new array that transforms the element's average altitude into their
 orbital periods.
-
 The array will contain objects in the format {name: 'name', avgAlt: avgAlt}.
-
 You can read about orbital periods on wikipedia.
-
 The values should be rounded to the nearest whole number. The body being orbited
 is Earth.
-
 The radius of the earth is 6367.4447 kilometers, and the GM value of earth is
 398600.4418
 */
@@ -436,10 +511,8 @@ Return the sum of all indices of elements of 'arr' that can be paired with one
 other element to form a sum that equals the value in the second argument 'arg'.
 If multiple sums are possible, return the smallest sum. Once an element has been
 used, it cannot be reused to pair with another.
-
 For example, pairwise([1, 4, 2, 3, 0, 5], 7) should return 11 because 4, 2, 3 and
 5 can be paired with each other to equal 7.
-
 pairwise([1, 3, 2, 4], 4) would only equal 1, because only the first two elements
 can be paired to equal 4, and the first element has an index of 0!
 */
@@ -457,16 +530,11 @@ pairwise([1,4,2,3,0,5], 7);
 //A thinking Ape
 /*
 PUZZLE
-
 Imagine you have a circle of people and you go around the circle removing every second person until one person is left.
-
 If you have 3 people in the circle, then the 3rd person will be the last one remaining.
 If you have 4 people then the 1st person will be the last one remaining.
 If you have 11 people then the 7th person will be the one remaining.
-
 If you have N people in the circle, who will be the last one remaining?
 */
-
-
 
 
