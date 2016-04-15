@@ -90,7 +90,7 @@ function checkCashRegister(price, cash, cid){
 
   if (change > cidTotal){
     return "Insufficient Funds";
-  }else if (change = cidTotal){
+  }else if (change == cidTotal){
     return "Closed";
   }
 
@@ -166,7 +166,7 @@ function updateInventory(arrInventory, arrDelivery) {
     }
     sortIt(arrInventory);
     sortIt(arrDelivery);
-    console.log(arrDelivery.join("\n"));
+    //console.log(arrDelivery.join("\n"));
     for (i=0; i<arrInventory.length; i++){
         if (!arrInventory[i]){
           continue;
@@ -186,7 +186,7 @@ function updateInventory(arrInventory, arrDelivery) {
         }
 
     }
-    console.log(arrDelivery);
+    //console.log(arrDelivery);
     while (arrDelivery.length >0){
       arrInventory.push(arrDelivery.shift());
     }
@@ -255,33 +255,60 @@ For example, aab should return 2 because it has 6 total permutations (aab, aab,
 aba, aba, baa, baa), but only 2 of them (aba and aba) don't have the same letter
 (in this case a) repeating.
 */
+//recursive permutation
 function permAlone(str) {
-  var letters, result, final, i, j, temp;
-  if (typeof str === "string"){
-    letters = str.split("");
-    for (i=0; i<letters.length; i++){
-      temp = letters;
-      temp.splice(i, 1);
-      permutation(letters[i], temp);
+  var lettersArr, arrPermu, i, j, result = [];
+  if (typeof str !== "string"){
+      return "Input is not string.";
+  }
+  arrPermu = permutation(str);
+  //console.log(arrPermu);
 
+  for (i=0; i<arrPermu.length; i++){
+    if(!isRepeating(arrPermu[i])){
+      //console.log(arrPermu[i]);
+      result.push(arrPermu[i]);
     }
-  }else {
-    return "Input is not string.";
+  }
+  return result.length;
+}
+
+function permutation(str){
+  var lastChar, allCharsExceptLast, permuAllCharsExceptLast, permu,
+      resultPermu = [];
+
+  if (str.length <= 1){
+    return [str];
   }
 
+  lastChar = str[str.length-1];
+  allCharsExceptLast = str.slice(0, str.length-1);
+  permusAllCharsExceptLast = permutation(allCharsExceptLast);
+  //console.log(permuAllCharsExceptLast);
 
+  permusAllCharsExceptLast.forEach(function(eachPermuAllCharsExceptLast){
+    for (var pos=0; pos<=allCharsExceptLast.length; pos++){
+        permu = eachPermuAllCharsExceptLast.slice(0, pos) + lastChar + eachPermuAllCharsExceptLast.slice(pos);
+        resultPermu.push(permu);
+     }
+  });
+  return resultPermu;
+}
 
-  function permutation(item, arr){
-
+function isRepeating(str){
+  for(var i=0; i<str.length-1; i++){
+    if (str.charAt(i) == str.charAt(i+1))
+      return true;
   }
-  return str;
+  return false;
 }
 
 permAlone('aab');
+
 //Heap's Algorithm
 //Heap's algorithm generates all possible permutations of N objects. It was
 //first proposed by B. R. Heap in 1963
-function permAlone(str) {
+function permAlone2(str) {
   var i, j, n, arr, stack, result, count, final;
   if (typeof str != "string"){
     return "Input should be an array or a string.";
@@ -345,7 +372,7 @@ function permAlone(str) {
   }
 }
 
-permAlone('abc');
+permAlone2('abc');
 
 var result = ["aabb", "baab", "abab", "abab", "baab", "baab", "abab", "abab", "baab", "aabb",
 "aabb", "abba", "baba", "baba", "abba", "bbaa", "bbaa", "bbaa", "bbaa", "abba", "baba", "baba", "abba", "aabb"];
@@ -523,10 +550,34 @@ These methods must be the only available means for interacting with the object.
 */
 
 var Person = function(firstAndLast) {
-    return firstAndLast;
-};
+  var fullName = firstName + " " + lastName;
+  var firstName = firstAndLast.split(" ")[0];
+  var lastName = firstAndLast.split(" ")[1];
 
+  this.getFirstName = function(){
+    return firstName;
+  };
+  this.getLastName = function(){
+    return lastName;
+  };
+  this.getFullName = function(){
+    return fullName;
+  };
+  this.setFirstName = function(firstNameStr){
+    firstName = firstNameStr;
+  };
+  this.setLastName = function(lastNameStr){
+    lastName = lastNameStr;
+  };
+  this.setFullName = function(fullNameStr){
+    firstName = fullNameStr.split(" ")[0];
+    lastName = fullNameStr.split(" ")[1];
+    fullName = firstName + " " + lastName;
+    return fullName;
+  };
+};
 var bob = new Person('Bob Ross');
+bob.setFirstName("Haskell");
 bob.getFullName();
 
 
@@ -541,14 +592,26 @@ is Earth.
 The radius of the earth is 6367.4447 kilometers, and the GM value of earth is
 398600.4418
 */
+function getOrbitalPeriod(orbitObjAlt, GM, planetRadius){
+  var avgDistance = planetRadius + orbitObjAlt;
+  var orbitalPeriod = 2 * Math.PI * Math.sqrt(Math.pow(avgDistance, 3) / GM);
+  return Math.round(orbitalPeriod);
+}
+
 function orbitalPeriod(arr) {
   var GM = 398600.4418;
   var earthRadius = 6367.4447;
-  return arr;
+  return arr.map(function(curObj){
+    var newObj = {
+      name: curObj.name,
+      orbitalPeriod: getOrbitalPeriod(curObj.avgAlt, GM, earthRadius)
+    };
+    console.log(newObj);
+    return newObj;
+  });
 }
 
-orbitalPeriod([{name : "sputnik", avgAlt : 35873.5553}]);
-
+orbitalPeriod([{name: "iss", avgAlt: 413.6}, {name: "hubble", avgAlt: 556.7}, {name: "moon", avgAlt: 378632.553}])
 /*Pairwise
 Return the sum of all indices of elements of 'arr' that can be paired with one
 other element to form a sum that equals the value in the second argument 'arg'.
@@ -573,7 +636,8 @@ pairwise([1,4,2,3,0,5], 7);
 //A thinking Ape
 /*
 PUZZLE
-Imagine you have a circle of people and you go around the circle removing every second person until one person is left.
+Imagine you have a circle of people and you go around the circle removing every second
+person until one person is left.
 If you have 3 people in the circle, then the 3rd person will be the last one remaining.
 If you have 4 people then the 1st person will be the last one remaining.
 If you have 11 people then the 7th person will be the one remaining.
