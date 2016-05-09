@@ -451,7 +451,6 @@ function noZeroPrefix(numStr){
     return numStr;
   }
 }
-
 function dateFormat(dateStr){
     var date = "";
     dateStr = noZeroPrefix(dateStr);
@@ -503,13 +502,13 @@ function TheDate(dateStr){
 }
 
 function makeFriendlyDates(datesArr) {
-  var i, result, m1, d1, y1, m2, d2, y2,
+  var i, result = [], m1, d1, y1, m2, d2, y2,
       today = new Date(),
       currentYear = today.getFullYear(),
       date1 = new TheDate(datesArr[0]),
       date2 = new TheDate(datesArr[1]),
       daysBetween2Dates = (Date.parse(datesArr[1]) - Date.parse(datesArr[0])) / (1000 * 60 * 60 * 24);
-      if (daysBetween2Dates > 365){
+      if (daysBetween2Dates >= 365){
         isWithinAYear = false;
       }else {
         isWithinAYear = true;
@@ -523,7 +522,11 @@ function makeFriendlyDates(datesArr) {
       d2 = date2.date;
       y2 = date2.year;
 
-     if (y1 == y2 || isWithinAYear){
+      if (m1 == m2 && y1 == y2){
+          m2 = "";
+      }
+
+      if (y1 == y2 || isWithinAYear){
         if (y1 == currentYear){
           y1 = "";
           y2 = "";
@@ -532,41 +535,20 @@ function makeFriendlyDates(datesArr) {
         }
       }
 
-      if (m1 == m2){
-        m2 = "";
-      }
-
-      if (d1 == d2){
+      if (d1 == d2 && isWithinAYear){
         d2 = "";
       }
+
 
       result.push(displayFormat(m1, d1, y1));
       if (y2 || m2 || d2) {
         result.push(displayFormat(m2, d2, y2));
       }
+
       return result;
 }
 
-makeFriendlyDates(['2016-07-01', '2016-07-04']);
-
-//test
-var arrTest = ['2016-07-01', '2016-07-04'];
-function transform(arr){
-  var n =  arr.length;
-    for (i=0; i<n; i++){
-      arr[i] = arr[i].split("-");
-      console.log("after split: " + arr[i]);
-      arr[i][1] = parseInt(arr[i][1]);
-      arr[i][2] = parseInt(arr[i][2]);
-
-      arr[i].push(arr[i].shift());
-      console.log("after shift: " + arr[i]);
-    }
-  return arr;
-}
-arrTest = transform(arrTest);
-console.log(arrTest[0]);
-
+makeFriendlyDates(["2018-01-13", "2018-01-13"]);
 
 /*Make a Person
 Fill in the object constructor with the methods specified in the tests.
@@ -644,7 +626,7 @@ function orbitalPeriod(arr) {
 
 orbitalPeriod([{name: "iss", avgAlt: 413.6}, {name: "hubble", avgAlt: 556.7}, {name: "moon", avgAlt: 378632.553}])
 
-
+//========================
 /*Pairwise
 Return the sum of all indices of elements of 'arr' that can be paired with one
 other element to form a sum that equals the value in the second argument 'arg'.
@@ -656,9 +638,9 @@ pairwise([1, 3, 2, 4], 4) would only equal 1, because only the first two element
 can be paired to equal 4, and the first element has an index of 0!
 */
 function pairwise(arr, arg) {
-  var i, num, numPair, numIndexHash = {}, numUniqueArr=[], numPairArr, result = [];
-  if (arr.length <=1){
-    throw new Error("invalide array input");
+  var i, num, numPair, numIndexHash = {}, numUniqueArr=[], numPairArr, indexPairArr = [], result = [];
+  if (arr.length < 0){
+    return 0;
   }
 
   for (i=0; i<arr.length; i++){
@@ -671,72 +653,59 @@ function pairwise(arr, arg) {
   }
 
   numUniqueArr = Object.keys(numIndexHash);
-  numPairArr = sumOfTwoEqualToArg(numUniqueArr, arg);
 
+  numPairArr = sumOfTwoEqualToArg(arr, arg);
+  console.log(numPairArr.join('\n'));
+
+  if (!numPairArr){
+    return "";
+  }
   for (i=0; i<numPairArr.length; i++){
     numPair = numPairArr[i];
-    addNumIndexToResult(numPair[0]);
-    addNumIndexToResult(numPair[1]);
+    addIndexPairToArr(numPair);
   }
+  console.log("indexPairArr: " + indexPairArr);
 
-  if (result.length == 1){
-    return result;
-  }else {
-     return result.reduce(function(sum, cur){
-        sum += cur;
-     });
-  }
+  result = indexPairArr.map(function(element){
+        return element[0] + element[1];
+  });
 
-  function addNumIndexToResult(num){
-    if (numIndexHash[num].length > 1){
-      result.push(Math.min.apply(numIndexHash[num]));
-    }else if (numIndexHash[num].length == 1){
-      result.push(numIndexHash[num]);
-    }
-  }
+  return result.reduce(function(sum, cur){
+    return sum + cur;
+  }, 0);
 
-}
-
-function sumOfTwoEqualToArg(arr, arg){
-  var i, j, num, diff, numHash = {}, numPairArr = [];
-  for(i=0; i<arr.length; i++){
-    num = arr[i];
-    if(numHash[num]){
-      numHash[num] ++;
-    }else{
-      numHash[num] = 1;
-    }
-  }
-  //console.log(JSON.stringify(numHash, null, 4));
-
-  for (j=0; j<arr.length; j++){
-    num = arr[j];
-    diff = arg - arr[j];
-    console.log("num: " + num + " diff: " + diff);
-    console.log(numHash[diff]);
-    if(numHash[diff]){
-      if (num != diff){
-        numPairArr.push([parseInt(num), diff]);
-        numPairArr[num] --;
-        numPairArr[diff] --;
-        console.log(numPairArr.join("\n"));
-      }else if(numHash[diff] > 1){
-        numPairArr.push[parseInt(num), parseInt(num)];
-        numPairArr[diff] -= 2;
-        console.log(numPairArr.join("\n"));
+  function addIndexPairToArr(pairArr){
+    var temp = [];
+    pairArr.forEach(function(num){
+      console.log("num: " + num);
+      if (numIndexHash[num].length > 0){
+        //temp.push(Math.min.apply(numIndexHash[num]));
+        temp.push(numIndexHash[num].shift());
       }
+      console.log("temp: " + temp);
+    });
+    if (temp.length === 2){
+      indexPairArr.push(temp);
     }
-    //
   }
 
-  console.log(numPairArr.join("\n"));
-  return numPairArr;
+  function sumOfTwoEqualToArg(arr, arg){
+    var i, diff, length = arr.length, numPairArray = [];
+    for (i=0; i<length; i++){
+        diff = arg - arr[i];
+        arrCopy = arr.slice(0);
+        arrCopy.splice(i, 1);
+        if (arrCopy.indexOf(diff) >= 0){
+            numPairArray.push([arr[i], diff]);
+        }
+    }
+    console.log("numPairArray: " + numPairArray.join('\n'));
+    return numPairArray;
+  }
 }
-sumOfTwoEqualToArg([1,4,2,3,0,5], 7);
-
+//sumOfTwoEqualToArg([0, 0, 0, 0, 1, 1], 1);
+pairwise([0, 0, 0, 0, 1, 1], 1);
 pairwise([1,4,2,3,0,5], 7);
-
-
 
 
 

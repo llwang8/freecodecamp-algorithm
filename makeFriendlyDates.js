@@ -1,3 +1,17 @@
+//======================================================
+/*Friendly Date Ranges
+Convert a date range consisting of two dates formatted as YYYY-MM-DD into a more
+readable format.
+The friendly display should use month names instead of numbers and ordinal dates
+instead of cardinal ("1st" instead of "1").
+Do not display information that is redundant or that can be inferred by the user:
+if the date range ends in less than a year from when it begins, do not display the
+ending year. If the range ends in the same month that it begins, do not display the
+ending year or month.
+Additionally, if the date range begins in the current year and ends within one year,
+the year should not be displayed at the beginning of the friendly range.
+*/
+
 function monthFormat(monthStr){
   var monthName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "Novement", "December"];
   return monthName[parseInt(monthStr) - 1];
@@ -82,6 +96,10 @@ function makeFriendlyDates(datesArr) {
       d2 = date2.date;
       y2 = date2.year;
 
+      if (m1 == m2 && y1 == y2){
+          m2 = "";
+      }
+
       if (y1 == y2 || isWithinAYear){
         if (y1 == currentYear){
           y1 = "";
@@ -89,10 +107,6 @@ function makeFriendlyDates(datesArr) {
         }else {
           y2 = "";
         }
-      }
-
-      if (m1 == m2 && y1 == y2){
-          m2 = "";
       }
 
       if (d1 == d2 && isWithinAYear){
