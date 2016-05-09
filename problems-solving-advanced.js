@@ -3,15 +3,14 @@
 //The user may fill out the form field any way they choose as long as it is a
 //valid US number. The following are examples of valid formats for US numbers
 //(refer to the tests below for other variants):
+
 function telephoneCheck(str) {
-  // Good luck!
-  return true;
+  //var phone = new RegExp("/^1? ?(\d{3}|\(\d{3}\))[ -]?\d{3}[ -]?\d{4}$/");
+  return /^1? ?(\d{3}|\(\d{3}\))[ -]?\d{3}[ -]?\d{4}$/.test(str);
+
 }
 
-
-
 telephoneCheck("555-555-5555");
-
 //Symmetric Difference
 //Create a function that takes two or more arrays and returns an array of the
 //symmetric difference (△ or ⊕) of the provided arrays.
